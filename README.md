@@ -17,7 +17,7 @@ This repository contains a Qt-based wallet and miner interface for the AlynCoin 
     The node binary requires RocksDB. On Linux the library is usually packaged as `librocksdb`. If you see an error mentioning the library when launching the application or node, install RocksDB on your system or rebuild the node statically with the library included.
 
 4. **Windows / WSL Setup**
-    Windows users can build the node inside the Windows Subsystem for Linux. Run `setup_wsl.sh` in WSL to install required packages. When starting the GUI from Windows, the node will launch via `launch_alyncoin_wsl.vbs`.
+    Windows users should first run `install_wsl_and_runtime.bat` to install WSL and the Visual C++ runtime.  Inside the WSL environment run `setup_wsl.sh` to install the Linux build dependencies. When starting the GUI from Windows, the node will launch via `launch_alyncoin_wsl.vbs`.
 
 5. **Launch the GUI**
     Run the wallet and miner interface with:
