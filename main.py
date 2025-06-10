@@ -77,8 +77,15 @@ def ensure_alyncoin_node(block=True):
     exe_dir = os.path.dirname(sys.executable if hasattr(sys, 'frozen') else os.path.abspath(__file__))
     candidates = [
         os.path.join(exe_dir, "alyncoin"),
+        os.path.join(exe_dir, "alyncoin", "alyncoin"),
         os.path.join(exe_dir, "build", "alyncoin")
     ]
+    if platform.system() == "Windows":
+        candidates.extend([
+            os.path.join(exe_dir, "alyncoin.exe"),
+            os.path.join(exe_dir, "alyncoin", "alyncoin.exe"),
+            os.path.join(exe_dir, "build", "alyncoin.exe"),
+        ])
     bin_path = None
     for c in candidates:
         if os.path.isfile(c) and os.access(c, os.X_OK):
@@ -88,8 +95,8 @@ def ensure_alyncoin_node(block=True):
         print("❌ Could not find 'alyncoin' node binary. Please ensure it's in the same folder or in 'build'.")
         return False
 
-    # Check for missing shared library dependencies (Linux/macOS)
-    if platform.system() != "Windows":
+    # Check for missing shared library dependencies on Linux where ldd is available
+    if platform.system() == "Linux":
         try:
             ldd_output = subprocess.check_output(["ldd", bin_path], text=True)
             missing = [line.strip() for line in ldd_output.splitlines() if "not found" in line]
@@ -99,6 +106,8 @@ def ensure_alyncoin_node(block=True):
                     print("   ", m)
                 print("Please install the required libraries (e.g. RocksDB) and try again.")
                 return False
+        except FileNotFoundError:
+            print("⚠️ 'ldd' not found; skipping shared library check")
         except Exception as e:
             print(f"⚠️ Could not verify shared libraries: {e}")
     if platform.system() == "Windows":
