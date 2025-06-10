@@ -87,6 +87,33 @@ def ensure_alyncoin_node(block=True):
     if not bin_path:
         print("❌ Could not find 'alyncoin' node binary. Please ensure it's in the same folder or in 'build'.")
         return False
+
+    # Check for missing shared library dependencies
+    sys_name = platform.system()
+    if sys_name == "Darwin":  # macOS uses otool -L
+        try:
+            otool = subprocess.check_output(["otool", "-L", bin_path], text=True)
+            missing = [line.strip() for line in otool.splitlines() if "(not found)" in line]
+            if missing:
+                print("❌ Missing shared libraries for 'alyncoin':")
+                for m in missing:
+                    print("   ", m)
+                print("Please install the required libraries (e.g. RocksDB) and try again.")
+                return False
+        except Exception as e:
+            print(f"⚠️ Could not verify shared libraries: {e}")
+    elif sys_name != "Windows":  # Linux ldd check
+        try:
+            ldd_output = subprocess.check_output(["ldd", bin_path], text=True)
+            missing = [line.strip() for line in ldd_output.splitlines() if "not found" in line]
+            if missing:
+                print("❌ Missing shared libraries for 'alyncoin':")
+                for m in missing:
+                    print("   ", m)
+                print("Please install the required libraries (e.g. RocksDB) and try again.")
+                return False
+        except Exception as e:
+            print(f"⚠️ Could not verify shared libraries: {e}")
     if platform.system() == "Windows":
         vbs_path = os.path.join(os.path.dirname(bin_path), "launch_alyncoin_wsl.vbs")
         if os.path.exists(vbs_path):
