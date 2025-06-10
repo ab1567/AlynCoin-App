@@ -16,6 +16,10 @@ This repository contains a Qt-based wallet and miner interface for the AlynCoin 
 3. **RocksDB Dependency**
    The node binary requires the `librocksdb` shared library. If you see an error mentioning `librocksdb.so` when launching the application or node, install RocksDB on your system or rebuild the node statically with the library included.
 
+## Platform Support
+
+The Python GUI runs on Windows, macOS, and Linux as long as Python and PyQt5 are installed. The bundled `alyncoin` binary included in this repository was built for Linux. To use the application on macOS or Windows, build a compatible `alyncoin` executable for that platform (for Windows you can also run the provided Linux binary under WSL).
+
 4. **Launch the GUI**
    Run the wallet and miner interface with:
    ```bash
